@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<title>Clicker</title>
+<style>
+html, body {
+  margin: 0; padding: 0;
+  background: #0e0e0e;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  color: white;
+}
+canvas {
+  display: block;
+  background: #181818;
+}
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<script>
+const SAVE_KEY = "clicker_release_simple";
+
+// Canvas setup
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+function resizeCanvas(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+// Game state
+let points = 0;
+let perClick = 1;
+let autoPerSec = 0;
+let totalClicks = 0;
+
+// Upgrades
+const upgrades = [
+  { name: "+1 / klikkaus", baseCost: 25, type: "click", bought: 0 },
+  { name: "+1 / sekunti", baseCost: 100, type: "auto", bought: 0 }
+];
+
+// Main button
+const button = { x:0, y:0, r:70, pulse:0 };
+
+// Events
+const events = ["Golden Click","Coin Rain"];
+let activeEvent = null;
+let eventEnd = 0;
+let lastEvent = null;
+let nextEventAllowed = Date.now() + 60000;
+
+// Effects
+let floatingTexts = [];
+let coins = [];
+
+// Achievements
+const achievements = [
+  { clicks:1, name:"Ensimmäinen klikki" },
+  { clicks:100, name:"100 klikkiä" },
+  { clicks:1000, name:"1 000 klikkiä" },
+  { clicks:10000, name:"10 000 klikkiä" },
+  { clicks:100000, name:"100 000 klikkiä" }
+];
+let unlockedAchievements = [];
+
+// Save/load
+function saveGame(){
+  localStorage.setItem(SAVE_KEY, JSON.stringify({
+    points, perClick, autoPerSec, totalClicks,
+    upgrades, unlockedAchievements,
+    lastSaveTime: Date.now()
+  }));
+}
+function loadGame(){
+  const data = JSON.parse(localStorage.getItem(SAVE_KEY));
+  if(!data) return;
+  points = data.points || 0;
+  perClick = data.perClick || 1;
+  autoPerSec = data.autoPerSec || 0;
+  totalClicks = data.totalClicks || 0;
+  unlockedAchievements = data.unlockedAchievements || [];
+
+  // Restore upgrades
+  if(data.upgrades){
+    upgrades.forEach((u,i)=>{
+      if(data.upgrades[i]){
+        u.bought = data.upgrades[i].bought || 0;
+        if(u.type==="click") perClick = 1+u.bought;
+        if(u.type==="auto") autoPerSec = u.bought;
+      }
+    });
+  }
+
+  // Offline progress
+  const offline = Math.floor((Date.now() - (data.lastSaveTime||Date.now()))/1000);
+  points += offline * autoPerSec;
+}
+
+// Events
+function tryStartEvent(){
+  if(activeEvent || Date.now()<nextEventAllowed) return;
+  const pool = events.filter(e=>e!==lastEvent);
+  activeEvent = pool[Math.floor(Math.random()*pool.length)];
+  eventEnd = Date.now() + 5000;
+  lastEvent = activeEvent;
+  nextEventAllowed = Date.now() + 20000;
+
+  if(activeEvent==="Coin Rain"){
+    for(let i=0;i<25;i++){
+      coins.push({ x: Math.random()*canvas.width, y:-20, r:18+Math.random()*6, speed:120+Math.random()*120 });
+    }
+  }
+}
+
+// Input
+canvas.addEventListener("click", e=>{
+  const r = canvas.getBoundingClientRect();
+  const mx = e.clientX - r.left;
+  const my = e.clientY - r.top;
+
+  // Main button
+  if(Math.hypot(mx-button.x,my-button.y)<button.r){
+    let gain = perClick;
+    if(activeEvent==="Golden Click") gain*=10;
+    points+=gain;
+    totalClicks++;
+    button.pulse=1;
+    floatingTexts.push({x:button.x+(Math.random()*20-10),y:button.y+(Math.random()*20-10),text:"+"+gain,life:1});
+  }
+
+  // Upgrades
+  upgrades.forEach((u,i)=>{
+    const x=20, y=canvas.height-120+i*50, w=240, h=45;
+    const cost = Math.floor(u.baseCost*Math.pow(1.6,u.bought));
+    if(mx>x && mx<x+w && my>y && my<y+h && points>=cost){
+      points-=cost;
+      u.bought++;
+      if(u.type==="click") perClick = 1+u.bought;
+      if(u.type==="auto") autoPerSec = u.bought;
+    }
+  });
+
+  // Coins
+  coins = coins.filter(c=>{
+    if(Math.hypot(mx-c.x,my-c.y)<c.r){ points+=5; return false; }
+    return true;
+  });
+});
+
+// Update/draw
+function update(dt){
+  points+=autoPerSec*dt;
+  button.pulse=Math.max(0,button.pulse-3*dt);
+
+  floatingTexts.forEach(t=>{ t.y-=30*dt; t.life-=dt; });
+  floatingTexts = floatingTexts.filter(t=>t.life>0);
+
+  coins.forEach(c=>c.y+=c.speed*dt);
+  coins = coins.filter(c=>c.y<canvas.height+20);
+
+  achievements.forEach(a=>{
+    if(totalClicks>=a.clicks && !unlockedAchievements.includes(a.name))
+      unlockedAchievements.push(a.name);
+  });
+
+  if(activeEvent && Date.now()>eventEnd) activeEvent=null;
+  tryStartEvent();
+}
+
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  ctx.fillStyle="white";
+  ctx.font="22px Arial";
+  ctx.fillText("Pisteet: "+Math.floor(points),20,40);
+
+  // Main button
+  button.x=canvas.width/2; button.y=canvas.height/2;
+  ctx.beginPath();
+  ctx.arc(button.x,button.y,button.r*(1+button.pulse*0.1),0,Math.PI*2);
+  ctx.fillStyle=activeEvent==="Golden Click"?"gold":"#00ff99";
+  ctx.fill();
+  ctx.fillStyle="#000";
+  ctx.fillText("KLIKKAA",button.x-45,button.y+8);
+
+  // Floating text
+  floatingTexts.forEach(t=>{
+    ctx.globalAlpha=t.life;
+    ctx.fillStyle="#000";
+    ctx.fillText(t.text,t.x-10,t.y);
+    ctx.globalAlpha=1;
+  });
+
+  // Coins
+  coins.forEach(c=>{
+    ctx.beginPath();
+    ctx.arc(c.x,c.y,c.r,0,Math.PI*2);
+    ctx.fillStyle="yellow";
+    ctx.fill();
+  });
+
+  // Upgrade buttons
+  upgrades.forEach((u,i)=>{
+    const x=20, y=canvas.height-120+i*50, w=240, h=45;
+    const cost = Math.floor(u.baseCost*Math.pow(1.6,u.bought));
+    ctx.fillStyle="#333";
+    ctx.fillRect(x,y,w,h);
+    ctx.strokeStyle="#00ff99";
+    ctx.strokeRect(x,y,w,h);
+    ctx.fillStyle="white";
+    ctx.fillText(`${u.name} (${cost})`,x+10,y+28);
+  });
+
+  if(activeEvent){
+    ctx.fillStyle="orange";
+    ctx.font="24px Arial";
+    ctx.fillText(activeEvent+" AKTIIVINEN!",canvas.width/2-150,80);
+  }
+}
+
+// Loop
+let last=performance.now();
+function loop(t){ update((t-last)/1000); last=t; draw(); requestAnimationFrame(loop); }
+
+// Start
+loadGame();
+setInterval(saveGame,2000);
+loop(last);
+</script>
+</body>
+</html>
