@@ -3,75 +3,259 @@
 <html lang="fi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=1.0,
+               user-scalable=no">
+
 <title>Liquid Glass Clicker</title>
 
 <style>
+
+/* =========================================================
+   BASE
+   ========================================================= */
+
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
+
   width: 100%;
   height: 100%;
+
   overflow: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
-               "SF Pro Text", Arial, sans-serif;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    "SF Pro Text",
+    Arial,
+    sans-serif;
+
   color: white;
+
   background: #07090d;
 }
 
-/* =========================================================
-   BACKGROUND
-   ========================================================= */
-
 body {
   position: relative;
+
   background:
-    radial-gradient(circle at 50% 40%, #19382f 0%, transparent 35%),
-    radial-gradient(circle at 10% 90%, #142d45 0%, transparent 35%),
-    radial-gradient(circle at 90% 10%, #30204b 0%, transparent 35%),
+    radial-gradient(
+      circle at 50% 40%,
+      rgba(20, 80, 60, .45),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 10% 90%,
+      rgba(20, 60, 100, .35),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 90% 10%,
+      rgba(70, 40, 100, .30),
+      transparent 40%
+    ),
     #07090d;
+
+  transition:
+    background 1.5s ease;
 }
 
-body::before,
-body::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
+/* =========================================================
+   LIQUID GLASS BACKGROUND ORBS
+   ========================================================= */
+
+#backgroundOrbs {
+  position: fixed;
+  inset: 0;
+
+  overflow: hidden;
+
   pointer-events: none;
-  opacity: .55;
-  animation: floatBlob 12s ease-in-out infinite alternate;
+
+  z-index: 0;
 }
 
-body::before {
-  width: 350px;
-  height: 350px;
-  background: #00ff99;
-  left: 25%;
-  top: 25%;
+.bgOrb {
+  position: absolute;
+
+  border-radius: 50%;
+
+  filter: blur(65px);
+
+  opacity: .32;
+
+  transition:
+    background 1.5s ease,
+    opacity 1.5s ease;
+
+  animation:
+    orbFloat
+    var(--floatTime)
+    ease-in-out
+    infinite alternate;
+
+  will-change:
+    transform,
+    width,
+    height;
 }
 
-body::after {
+.bgOrb::after {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  border-radius: inherit;
+
+  background:
+    radial-gradient(
+      circle at 30% 25%,
+      rgba(255,255,255,.18),
+      transparent 45%
+    );
+
+  animation:
+    orbPulse
+    var(--pulseTime)
+    ease-in-out
+    infinite alternate;
+}
+
+.orb1 {
+  width: 380px;
+  height: 380px;
+
+  left: 5%;
+  top: 15%;
+
+  background: #00d995;
+
+  --floatTime: 13s;
+  --pulseTime: 7s;
+}
+
+.orb2 {
   width: 300px;
   height: 300px;
-  background: #6875ff;
+
   right: 5%;
-  bottom: 5%;
-  animation-delay: -5s;
+  top: 8%;
+
+  background: #6875ff;
+
+  --floatTime: 17s;
+  --pulseTime: 9s;
 }
 
-@keyframes floatBlob {
-  from {
-    transform: translate(-20px, -15px) scale(1);
+.orb3 {
+  width: 340px;
+  height: 340px;
+
+  left: 40%;
+  bottom: -120px;
+
+  background: #00aaff;
+
+  --floatTime: 15s;
+  --pulseTime: 8s;
+}
+
+@keyframes orbFloat {
+
+  0% {
+    transform:
+      translate(-20px, -10px)
+      scale(.90);
   }
-  to {
-    transform: translate(25px, 20px) scale(1.15);
+
+  50% {
+    transform:
+      translate(10px, 20px)
+      scale(1.04);
   }
+
+  100% {
+    transform:
+      translate(30px, -15px)
+      scale(1.12);
+  }
+}
+
+@keyframes orbPulse {
+
+  0% {
+    transform: scale(.88);
+    opacity: .55;
+  }
+
+  100% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+}
+
+/* =========================================================
+   EVENT BACKGROUND STATES
+   ========================================================= */
+
+body.event-coin {
+  background:
+    radial-gradient(
+      circle at 50% 40%,
+      rgba(255,190,20,.35),
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 10% 90%,
+      rgba(255,140,0,.25),
+      transparent 40%
+    ),
+    #080806;
+}
+
+body.event-golden {
+  background:
+    radial-gradient(
+      circle at 50% 40%,
+      rgba(255,210,30,.40),
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 85% 15%,
+      rgba(255,150,0,.25),
+      transparent 40%
+    ),
+    #090806;
+}
+
+body.event-coin .orb1,
+body.event-coin .orb2,
+body.event-coin .orb3 {
+  background: #ffb300;
+}
+
+body.event-golden .orb1,
+body.event-golden .orb2,
+body.event-golden .orb3 {
+  background: #ffd21f;
+}
+
+body.event-coin .bgOrb,
+body.event-golden .bgOrb {
+  opacity: .40;
 }
 
 /* =========================================================
@@ -80,14 +264,21 @@ body::after {
 
 canvas {
   position: fixed;
+
   inset: 0;
+
   width: 100%;
   height: 100%;
+
   display: block;
+
+  z-index: 1;
+
+  pointer-events: none;
 }
 
 /* =========================================================
-   LIQUID GLASS BASE
+   GLASS
    ========================================================= */
 
 .glass {
@@ -100,7 +291,8 @@ canvas {
       rgba(255,255,255,.055)
     );
 
-  border: 1px solid rgba(255,255,255,.20);
+  border:
+    1px solid rgba(255,255,255,.20);
 
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.25),
@@ -118,20 +310,26 @@ canvas {
   overflow: hidden;
 }
 
-/* Glass reflection */
 .glass::before {
   content: "";
+
   position: absolute;
+
   left: -30%;
   top: -80%;
+
   width: 160%;
   height: 100%;
-  background: linear-gradient(
-    180deg,
-    rgba(255,255,255,.18),
-    transparent 70%
-  );
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.18),
+      transparent 70%
+    );
+
   transform: rotate(-8deg);
+
   pointer-events: none;
 }
 
@@ -141,50 +339,63 @@ canvas {
 
 #scorePanel {
   position: fixed;
+
   top: 22px;
   left: 50%;
+
   transform: translateX(-50%);
 
   min-width: 220px;
+
   padding: 12px 24px;
 
   border-radius: 24px;
 
   text-align: center;
+
   z-index: 10;
 }
 
 #scoreLabel {
   font-size: 12px;
+
   opacity: .65;
+
   letter-spacing: 1.5px;
+
   text-transform: uppercase;
 }
 
 #score {
   margin-top: 1px;
+
   font-size: 30px;
+
   font-weight: 650;
+
   letter-spacing: -.5px;
 }
 
 /* =========================================================
-   MAIN CLICK BUTTON
+   CLICK BUTTON
    ========================================================= */
 
 #clickButton {
   position: fixed;
+
   left: 50%;
   top: 50%;
 
   width: 170px;
   height: 170px;
 
-  transform: translate(-50%, -50%);
+  transform:
+    translate(-50%, -50%);
 
   border-radius: 50%;
 
-  border: 1px solid rgba(255,255,255,.35);
+  border:
+    1px solid rgba(255,255,255,.35);
 
   background:
     radial-gradient(
@@ -210,17 +421,51 @@ canvas {
     0 20px 60px rgba(0,0,0,.35);
 
   cursor: pointer;
+
   z-index: 5;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
 
   user-select: none;
 
+  touch-action: manipulation;
+
   transition:
-    transform .12s ease,
-    box-shadow .2s ease;
+    background 1s ease,
+    box-shadow 1s ease;
+}
+
+#clickButton.golden {
+  background:
+    radial-gradient(
+      circle at 35% 25%,
+      rgba(255,255,255,.48),
+      rgba(255,215,50,.30) 40%,
+      rgba(255,150,0,.20) 75%
+    );
+
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.45),
+    0 0 60px rgba(255,190,0,.50),
+    0 20px 60px rgba(0,0,0,.35);
+}
+
+#clickButton.coin {
+  background:
+    radial-gradient(
+      circle at 35% 25%,
+      rgba(255,255,255,.48),
+      rgba(255,205,40,.28) 40%,
+      rgba(255,140,0,.20) 75%
+    );
+
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.45),
+    0 0 45px rgba(255,180,0,.35),
+    0 20px 60px rgba(0,0,0,.35);
 }
 
 #clickButton:hover {
@@ -231,37 +476,24 @@ canvas {
     0 20px 60px rgba(0,0,0,.35);
 }
 
-#clickButton:active {
-  transform: translate(-50%, -50%) scale(.91);
-}
-
-#clickButton.golden {
-  background:
-    radial-gradient(
-      circle at 35% 25%,
-      rgba(255,255,255,.45),
-      rgba(255,210,40,.28) 40%,
-      rgba(255,150,0,.20) 75%
-    );
-
-  box-shadow:
-    inset 0 2px 4px rgba(255,255,255,.45),
-    0 0 55px rgba(255,190,0,.45),
-    0 20px 60px rgba(0,0,0,.35);
-}
-
 .clickText {
   position: relative;
+
   z-index: 2;
+
   font-size: 19px;
+
   font-weight: 650;
+
   letter-spacing: 2px;
-  text-shadow: 0 2px 10px rgba(0,0,0,.4);
+
+  text-shadow:
+    0 2px 10px rgba(0,0,0,.4);
 }
 
-/* Small shine on button */
 #clickButton::after {
   content: "";
+
   position: absolute;
 
   width: 90px;
@@ -272,7 +504,9 @@ canvas {
 
   border-radius: 50%;
 
-  background: rgba(255,255,255,.20);
+  background:
+    rgba(255,255,255,.20);
+
   filter: blur(12px);
 
   transform: rotate(-15deg);
@@ -288,7 +522,8 @@ canvas {
   left: 20px;
   bottom: 20px;
 
-  width: min(310px, calc(100vw - 40px));
+  width:
+    min(310px, calc(100vw - 40px));
 
   padding: 12px;
 
@@ -299,24 +534,30 @@ canvas {
 
 .panelTitle {
   font-size: 12px;
+
   letter-spacing: 1.5px;
+
   text-transform: uppercase;
+
   opacity: .6;
 
-  padding: 4px 8px 10px;
+  padding:
+    4px 8px 10px;
 }
 
 .upgrade {
   position: relative;
 
   width: 100%;
+
   min-height: 58px;
 
   margin-top: 7px;
 
   border-radius: 19px;
 
-  border: 1px solid rgba(255,255,255,.13);
+  border:
+    1px solid rgba(255,255,255,.13);
 
   background:
     linear-gradient(
@@ -349,7 +590,8 @@ canvas {
       rgba(255,255,255,.06)
     );
 
-  border-color: rgba(255,255,255,.28);
+  border-color:
+    rgba(255,255,255,.28);
 }
 
 .upgrade:active {
@@ -362,17 +604,20 @@ canvas {
 
 .upgradeName {
   font-size: 14px;
+
   font-weight: 600;
 }
 
 .upgradeCost {
   margin-top: 3px;
+
   font-size: 12px;
+
   opacity: .6;
 }
 
 /* =========================================================
-   EVENT
+   EVENT PANEL
    ========================================================= */
 
 #eventPanel {
@@ -381,9 +626,12 @@ canvas {
   top: 90px;
   left: 50%;
 
-  transform: translateX(-50%) translateY(-10px);
+  transform:
+    translateX(-50%)
+    translateY(-10px);
 
-  padding: 10px 20px;
+  padding:
+    10px 20px;
 
   border-radius: 20px;
 
@@ -398,6 +646,7 @@ canvas {
   z-index: 20;
 
   font-size: 14px;
+
   font-weight: 600;
 
   white-space: nowrap;
@@ -405,11 +654,140 @@ canvas {
 
 #eventPanel.active {
   opacity: 1;
-  transform: translateX(-50%) translateY(0);
+
+  transform:
+    translateX(-50%)
+    translateY(0);
 }
 
 /* =========================================================
-   FLOATING CLICK TEXT
+   NOTIFICATION STACK
+   ========================================================= */
+
+#notifications {
+  position: fixed;
+
+  right: 18px;
+  bottom: 18px;
+
+  width:
+    min(340px, calc(100vw - 36px));
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-end;
+
+  gap: 8px;
+
+  z-index: 100;
+
+  pointer-events: none;
+}
+
+.notification {
+  position: relative;
+
+  max-width: 100%;
+
+  padding:
+    11px 16px;
+
+  border-radius: 18px;
+
+  font-size: 13px;
+
+  line-height: 1.35;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.17),
+      rgba(255,255,255,.06)
+    );
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.20),
+    0 8px 30px rgba(0,0,0,.25);
+
+  backdrop-filter:
+    blur(22px)
+    saturate(170%);
+
+  -webkit-backdrop-filter:
+    blur(22px)
+    saturate(170%);
+
+  animation:
+    notificationIn
+    .25s ease-out forwards;
+}
+
+.notification.click {
+  border-color:
+    rgba(120,255,190,.30);
+}
+
+.notification.coin {
+  border-color:
+    rgba(255,210,70,.35);
+}
+
+.notification.golden {
+  border-color:
+    rgba(255,220,80,.40);
+}
+
+.notification.out {
+  animation:
+    notificationOut
+    .3s ease-in forwards;
+}
+
+@keyframes notificationIn {
+
+  from {
+    opacity: 0;
+
+    transform:
+      translateX(30px)
+      scale(.96);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateX(0)
+      scale(1);
+  }
+}
+
+@keyframes notificationOut {
+
+  from {
+    opacity: 1;
+
+    transform:
+      translateX(0)
+      scale(1);
+  }
+
+  to {
+    opacity: 0;
+
+    transform:
+      translateX(25px)
+      scale(.96);
+  }
+}
+
+/* =========================================================
+   FLOATING TEXT
    ========================================================= */
 
 .floatText {
@@ -418,6 +796,7 @@ canvas {
   pointer-events: none;
 
   font-size: 18px;
+
   font-weight: 700;
 
   color: white;
@@ -425,52 +804,141 @@ canvas {
   text-shadow:
     0 2px 12px rgba(0,0,0,.7);
 
-  animation: floatUp .8s ease-out forwards;
+  animation:
+    floatUp
+    .8s
+    ease-out
+    forwards;
 
   z-index: 30;
 }
 
 @keyframes floatUp {
+
   0% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+
+    transform:
+      translateY(0)
+      scale(1);
   }
 
   100% {
     opacity: 0;
-    transform: translateY(-60px) scale(1.15);
+
+    transform:
+      translateY(-60px)
+      scale(1.15);
   }
 }
 
 /* =========================================================
-   COIN
+   COINS
    ========================================================= */
 
 .coin {
   position: fixed;
 
-  width: 34px;
-  height: 34px;
+  width: 48px;
+  height: 48px;
 
   border-radius: 50%;
 
   background:
     radial-gradient(
       circle at 30% 25%,
-      #fff8a0,
-      #ffd92f 35%,
-      #ffb300 75%
+      #fffbd0,
+      #ffe45a 30%,
+      #ffc21a 65%,
+      #ff9d00 100%
     );
 
-  box-shadow:
-    inset 0 2px 3px rgba(255,255,255,.6),
-    0 5px 15px rgba(255,180,0,.4);
+  border:
+    1px solid
+    rgba(255,255,255,.60);
 
-  border: 1px solid rgba(255,255,255,.45);
+  box-shadow:
+    inset 0 3px 5px rgba(255,255,255,.65),
+    inset 0 -4px 7px rgba(180,90,0,.20),
+    0 5px 20px rgba(255,180,0,.45);
+
+  pointer-events: auto;
+
+  touch-action: manipulation;
+
+  cursor: pointer;
+
+  z-index: 50;
+
+  user-select: none;
+
+  animation:
+    coinSpin
+    1.8s
+    ease-in-out
+    infinite;
+}
+
+.coin::before {
+  content: "¢";
+
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform:
+    translate(-50%, -52%);
+
+  font-size: 23px;
+
+  font-weight: 700;
+
+  color:
+    rgba(150,85,0,.55);
+}
+
+.coin.collected {
+  animation:
+    coinCollect
+    .18s
+    ease-out
+    forwards;
 
   pointer-events: none;
+}
 
-  z-index: 15;
+@keyframes coinSpin {
+
+  0%,
+  100% {
+    transform:
+      rotateY(0deg)
+      scale(1);
+  }
+
+  50% {
+    transform:
+      rotateY(180deg)
+      scale(1.05);
+  }
+}
+
+@keyframes coinCollect {
+
+  from {
+    opacity: 1;
+
+    transform:
+      scale(1);
+  }
+
+  to {
+    opacity: 0;
+
+    transform:
+      scale(1.55);
+  }
 }
 
 /* =========================================================
@@ -481,8 +949,12 @@ canvas {
 
   #scorePanel {
     top: 12px;
+
     min-width: 180px;
-    padding: 9px 18px;
+
+    padding:
+      9px 18px;
+
     border-radius: 20px;
   }
 
@@ -502,125 +974,392 @@ canvas {
   #upgradePanel {
     left: 10px;
     bottom: 10px;
-    width: calc(100vw - 20px);
+
+    width:
+      calc(100vw - 20px);
+
     border-radius: 24px;
   }
 
   .upgrade {
     min-height: 52px;
   }
+
+  #notifications {
+    right: 10px;
+    bottom: 10px;
+
+    width:
+      calc(100vw - 20px);
+  }
+
+  .notification {
+    font-size: 12px;
+  }
 }
+
 </style>
 </head>
 
 <body>
 
+<!-- =====================================================
+     BACKGROUND
+     ===================================================== -->
+
+<div id="backgroundOrbs">
+
+  <div class="bgOrb orb1"></div>
+  <div class="bgOrb orb2"></div>
+  <div class="bgOrb orb3"></div>
+
+</div>
+
 <canvas id="game"></canvas>
 
-<!-- SCORE -->
+<!-- =====================================================
+     SCORE
+     ===================================================== -->
+
 <div id="scorePanel" class="glass">
-  <div id="scoreLabel">Pisteet</div>
-  <div id="score">0</div>
+
+  <div id="scoreLabel">
+    Pisteet
+  </div>
+
+  <div id="score">
+    0
+  </div>
+
 </div>
 
-<!-- EVENT -->
+<!-- =====================================================
+     EVENT
+     ===================================================== -->
+
 <div id="eventPanel" class="glass">
+
   <span id="eventText"></span>
+
 </div>
 
-<!-- MAIN BUTTON -->
+<!-- =====================================================
+     MAIN BUTTON
+     ===================================================== -->
+
 <div id="clickButton">
-  <div class="clickText">KLIKKAA</div>
+
+  <div class="clickText">
+    KLIKKAA
+  </div>
+
 </div>
 
-<!-- UPGRADES -->
+<!-- =====================================================
+     UPGRADES
+     ===================================================== -->
+
 <div id="upgradePanel" class="glass">
-  <div class="panelTitle">Vahvistukset</div>
+
+  <div class="panelTitle">
+    Vahvistukset
+  </div>
+
   <div id="upgrades"></div>
+
 </div>
+
+<!-- =====================================================
+     NOTIFICATIONS
+     ===================================================== -->
+
+<div id="notifications"></div>
+
 
 <script>
-const SAVE_KEY = "clicker_release_simple";
+
+/* =========================================================
+   SAVE
+   ========================================================= */
+
+const SAVE_KEY =
+  "clicker_release_simple";
+
 
 /* =========================================================
    CANVAS
    ========================================================= */
 
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+const canvas =
+  document.getElementById("game");
+
+const ctx =
+  canvas.getContext("2d");
 
 function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+
+  canvas.width =
+    window.innerWidth;
+
+  canvas.height =
+    window.innerHeight;
 }
 
-window.addEventListener("resize", resizeCanvas);
+window.addEventListener(
+  "resize",
+  resizeCanvas
+);
+
 resizeCanvas();
+
 
 /* =========================================================
    GAME STATE
    ========================================================= */
 
 let points = 0;
+
 let perClick = 1;
+
 let autoPerSec = 0;
+
 let totalClicks = 0;
 
+
+/* =========================================================
+   UPGRADES
+   ========================================================= */
+
 const upgrades = [
+
   {
     name: "+1 / klikkaus",
     baseCost: 25,
     type: "click",
     bought: 0
   },
+
   {
     name: "+1 / sekunti",
     baseCost: 100,
     type: "auto",
     bought: 0
   }
+
 ];
+
 
 /* =========================================================
    EVENTS
    ========================================================= */
 
-const events = ["Golden Click", "Coin Rain"];
+const events = [
+  "Golden Click",
+  "Coin Rain"
+];
 
 let activeEvent = null;
+
 let eventEnd = 0;
+
 let lastEvent = null;
-let nextEventAllowed = Date.now() + 60000;
 
-/* =========================================================
-   EFFECTS
-   ========================================================= */
+let nextEventAllowed =
+  Date.now() + 60000;
 
-let coins = [];
 
 /* =========================================================
    ACHIEVEMENTS
    ========================================================= */
 
 const achievements = [
-  { clicks: 1, name: "Ensimmäinen klikki" },
-  { clicks: 100, name: "100 klikkiä" },
-  { clicks: 1000, name: "1 000 klikkiä" },
-  { clicks: 10000, name: "10 000 klikkiä" },
-  { clicks: 100000, name: "100 000 klikkiä" }
+
+  {
+    clicks: 1,
+    name: "Ensimmäinen klikki"
+  },
+
+  {
+    clicks: 100,
+    name: "100 klikkiä"
+  },
+
+  {
+    clicks: 1000,
+    name: "1 000 klikkiä"
+  },
+
+  {
+    clicks: 10000,
+    name: "10 000 klikkiä"
+  },
+
+  {
+    clicks: 100000,
+    name: "100 000 klikkiä"
+  }
+
 ];
 
 let unlockedAchievements = [];
 
+
 /* =========================================================
-   UI
+   UI REFERENCES
    ========================================================= */
 
-const scoreElement = document.getElementById("score");
-const clickButton = document.getElementById("clickButton");
-const upgradesElement = document.getElementById("upgrades");
-const eventPanel = document.getElementById("eventPanel");
-const eventText = document.getElementById("eventText");
+const scoreElement =
+  document.getElementById("score");
+
+const clickButton =
+  document.getElementById("clickButton");
+
+const upgradesElement =
+  document.getElementById("upgrades");
+
+const eventPanel =
+  document.getElementById("eventPanel");
+
+const eventText =
+  document.getElementById("eventText");
+
+const notifications =
+  document.getElementById("notifications");
+
+
+/* =========================================================
+   SOUND
+   ========================================================= */
+
+/*
+   Tiny Web Audio "pim".
+
+   AudioContext is created only after the player
+   interacts with the page, so browsers allow it.
+*/
+
+let audioContext = null;
+
+function playPim() {
+
+  try {
+
+    if (!audioContext) {
+
+      audioContext =
+        new (
+          window.AudioContext ||
+          window.webkitAudioContext
+        )();
+
+    }
+
+    if (audioContext.state === "suspended")
+      audioContext.resume();
+
+    const oscillator =
+      audioContext.createOscillator();
+
+    const gain =
+      audioContext.createGain();
+
+    oscillator.type = "sine";
+
+    oscillator.frequency.setValueAtTime(
+      880,
+      audioContext.currentTime
+    );
+
+    oscillator.frequency.exponentialRampToValueAtTime(
+      1320,
+      audioContext.currentTime + .055
+    );
+
+    gain.gain.setValueAtTime(
+      0.0001,
+      audioContext.currentTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+      0.055,
+      audioContext.currentTime + .008
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+      0.0001,
+      audioContext.currentTime + .09
+    );
+
+    oscillator.connect(gain);
+
+    gain.connect(
+      audioContext.destination
+    );
+
+    oscillator.start();
+
+    oscillator.stop(
+      audioContext.currentTime + .1
+    );
+
+  } catch (e) {
+
+    /* Audio unavailable - game still works. */
+
+  }
+}
+
+
+/* =========================================================
+   NOTIFICATIONS
+   ========================================================= */
+
+function showNotification(
+  message,
+  type = "click"
+) {
+
+  const notification =
+    document.createElement("div");
+
+  notification.className =
+    "notification " + type;
+
+  notification.textContent =
+    message;
+
+  notifications.appendChild(
+    notification
+  );
+
+  /*
+     Keep the stack short.
+     This prevents hundreds of click messages
+     from filling the screen.
+  */
+
+  while (
+    notifications.children.length > 5
+  ) {
+
+    notifications.firstChild.remove();
+  }
+
+  setTimeout(() => {
+
+    notification.classList.add(
+      "out"
+    );
+
+    setTimeout(() => {
+
+      notification.remove();
+
+    }, 300);
+
+  }, 1800);
+}
+
 
 /* =========================================================
    SAVE / LOAD
@@ -629,66 +1368,121 @@ const eventText = document.getElementById("eventText");
 function saveGame() {
 
   localStorage.setItem(
+
     SAVE_KEY,
+
     JSON.stringify({
+
       points,
       perClick,
       autoPerSec,
       totalClicks,
+
       upgrades,
+
       unlockedAchievements,
-      lastSaveTime: Date.now()
+
+      lastSaveTime:
+        Date.now()
+
     })
+
   );
 }
 
+
 function loadGame() {
 
-  const raw = localStorage.getItem(SAVE_KEY);
+  const raw =
+    localStorage.getItem(
+      SAVE_KEY
+    );
 
-  if (!raw) return;
+  if (!raw)
+    return;
 
   try {
 
-    const data = JSON.parse(raw);
+    const data =
+      JSON.parse(raw);
 
-    points = data.points || 0;
-    perClick = data.perClick || 1;
-    autoPerSec = data.autoPerSec || 0;
-    totalClicks = data.totalClicks || 0;
+    points =
+      data.points || 0;
+
+    perClick =
+      data.perClick || 1;
+
+    autoPerSec =
+      data.autoPerSec || 0;
+
+    totalClicks =
+      data.totalClicks || 0;
 
     unlockedAchievements =
       data.unlockedAchievements || [];
 
+
     if (data.upgrades) {
 
-      upgrades.forEach((u, i) => {
+      upgrades.forEach(
+        (u, i) => {
 
-        if (data.upgrades[i]) {
+          if (
+            data.upgrades[i]
+          ) {
 
-          u.bought =
-            data.upgrades[i].bought || 0;
+            u.bought =
+              data.upgrades[i].bought || 0;
 
-          if (u.type === "click")
-            perClick = 1 + u.bought;
+            if (
+              u.type === "click"
+            ) {
 
-          if (u.type === "auto")
-            autoPerSec = u.bought;
+              perClick =
+                1 + u.bought;
+            }
+
+            if (
+              u.type === "auto"
+            ) {
+
+              autoPerSec =
+                u.bought;
+            }
+
+          }
+
         }
-      });
+      );
+
     }
 
-    const offline = Math.floor(
-      (Date.now() -
-        (data.lastSaveTime || Date.now())) / 1000
-    );
 
-    points += offline * autoPerSec;
+    const offline =
+      Math.floor(
+
+        (
+          Date.now() -
+          (
+            data.lastSaveTime ||
+            Date.now()
+          )
+        ) / 1000
+
+      );
+
+    points +=
+      offline * autoPerSec;
 
   } catch {
-    console.log("Save data corrupted.");
+
+    console.log(
+      "Save data corrupted."
+    );
+
   }
 }
+
 
 /* =========================================================
    UPGRADE UI
@@ -696,127 +1490,122 @@ function loadGame() {
 
 function updateUpgradeUI() {
 
-  upgradesElement.innerHTML = "";
+  upgradesElement.innerHTML =
+    "";
 
-  upgrades.forEach((u, i) => {
+  upgrades.forEach(
+    (u) => {
 
-    const cost =
-      Math.floor(
-        u.baseCost *
-        Math.pow(1.6, u.bought)
-      );
+      const cost =
+        Math.floor(
 
-    const button =
-      document.createElement("button");
+          u.baseCost *
+          Math.pow(
+            1.6,
+            u.bought
+          )
 
-    button.className = "upgrade";
+        );
 
-    if (points < cost)
-      button.classList.add("disabled");
+      const button =
+        document.createElement(
+          "button"
+        );
 
-    button.innerHTML = `
-      <div class="upgradeName">
-        ${u.name}
-      </div>
-
-      <div class="upgradeCost">
-        ${cost.toLocaleString("fi-FI")} pistettä
-        · ${u.bought} ostettu
-      </div>
-    `;
-
-    button.addEventListener("click", () => {
+      button.className =
+        "upgrade";
 
       if (points < cost)
-        return;
+        button.classList.add(
+          "disabled"
+        );
 
-      points -= cost;
+      button.innerHTML = `
 
-      u.bought++;
+        <div class="upgradeName">
+          ${u.name}
+        </div>
 
-      if (u.type === "click")
-        perClick = 1 + u.bought;
+        <div class="upgradeCost">
 
-      if (u.type === "auto")
-        autoPerSec = u.bought;
+          ${cost.toLocaleString(
+            "fi-FI"
+          )}
 
-      updateUpgradeUI();
-    });
+          pistettä
 
-    upgradesElement.appendChild(button);
-  });
-}
+          ·
 
-/* =========================================================
-   MAIN CLICK
-   ========================================================= */
+          ${u.bought}
+          ostettu
 
-function clickGame(x, y) {
+        </div>
 
-  let gain = perClick;
+      `;
 
-  if (activeEvent === "Golden Click")
-    gain *= 10;
+      button.addEventListener(
+        "click",
+        () => {
 
-  points += gain;
-  totalClicks++;
+          if (points < cost)
+            return;
 
-  createFloatingText(
-    x,
-    y,
-    "+" + gain
-  );
+          points -= cost;
 
-  /* Button animation */
+          u.bought++;
 
-  clickButton.animate(
-    [
-      {
-        transform:
-          "translate(-50%, -50%) scale(1)"
-      },
-      {
-        transform:
-          "translate(-50%, -50%) scale(.90)"
-      },
-      {
-        transform:
-          "translate(-50%, -50%) scale(1.03)"
-      },
-      {
-        transform:
-          "translate(-50%, -50%) scale(1)"
-      }
-    ],
-    {
-      duration: 180,
-      easing: "ease-out"
+          if (
+            u.type === "click"
+          ) {
+
+            perClick =
+              1 + u.bought;
+
+          }
+
+          if (
+            u.type === "auto"
+          ) {
+
+            autoPerSec =
+              u.bought;
+
+          }
+
+          updateUpgradeUI();
+
+        }
+      );
+
+      upgradesElement.appendChild(
+        button
+      );
+
     }
   );
 }
 
-clickButton.addEventListener("pointerdown", e => {
-
-  e.preventDefault();
-
-  clickGame(
-    e.clientX,
-    e.clientY
-  );
-});
 
 /* =========================================================
    FLOATING TEXT
    ========================================================= */
 
-function createFloatingText(x, y, text) {
+function createFloatingText(
+  x,
+  y,
+  text
+) {
 
   const element =
-    document.createElement("div");
+    document.createElement(
+      "div"
+    );
 
-  element.className = "floatText";
+  element.className =
+    "floatText";
 
-  element.textContent = text;
+  element.textContent =
+    text;
 
   element.style.left =
     (x - 15) + "px";
@@ -824,131 +1613,460 @@ function createFloatingText(x, y, text) {
   element.style.top =
     (y - 15) + "px";
 
-  document.body.appendChild(element);
-
-  setTimeout(() => {
-    element.remove();
-  }, 800);
-}
-
-/* =========================================================
-   EVENTS
-   ========================================================= */
-
-function tryStartEvent() {
-
-  if (
-    activeEvent ||
-    Date.now() < nextEventAllowed
-  )
-    return;
-
-  const pool =
-    events.filter(e => e !== lastEvent);
-
-  activeEvent =
-    pool[
-      Math.floor(
-        Math.random() * pool.length
-      )
-    ];
-
-  eventEnd =
-    Date.now() + 5000;
-
-  lastEvent = activeEvent;
-
-  nextEventAllowed =
-    Date.now() + 20000;
-
-  eventText.textContent =
-    activeEvent === "Golden Click"
-      ? "✨ GOLDEN CLICK — 10× klikkaus!"
-      : "🪙 COIN RAIN — kerää kolikot!";
-
-  eventPanel.classList.add("active");
-
-  clickButton.classList.toggle(
-    "golden",
-    activeEvent === "Golden Click"
+  document.body.appendChild(
+    element
   );
 
-  if (activeEvent === "Coin Rain") {
-
-    for (let i = 0; i < 25; i++) {
-
-      createCoin();
-    }
-  }
+  setTimeout(
+    () => element.remove(),
+    800
+  );
 }
+
+
+/* =========================================================
+   MAIN CLICK
+   ========================================================= */
+
+function clickGame(
+  x,
+  y
+) {
+
+  let gain =
+    perClick;
+
+  if (
+    activeEvent ===
+    "Golden Click"
+  ) {
+
+    gain *= 10;
+
+  }
+
+  points += gain;
+
+  totalClicks++;
+
+
+  /* Small sound */
+
+  playPim();
+
+
+  /* Floating number */
+
+  createFloatingText(
+    x,
+    y,
+    "+" + gain
+  );
+
+
+  /*
+     Normal click notification.
+  */
+
+  showNotification(
+    "+" +
+    gain.toLocaleString(
+      "fi-FI"
+    ) +
+    " kolikkoa saatu klikkauksesta",
+    "click"
+  );
+
+
+  /*
+     Button animation.
+  */
+
+  clickButton.animate(
+
+    [
+
+      {
+        transform:
+          "translate(-50%, -50%) scale(1)"
+      },
+
+      {
+        transform:
+          "translate(-50%, -50%) scale(.90)"
+      },
+
+      {
+        transform:
+          "translate(-50%, -50%) scale(1.03)"
+      },
+
+      {
+        transform:
+          "translate(-50%, -50%) scale(1)"
+      }
+
+    ],
+
+    {
+
+      duration: 180,
+
+      easing: "ease-out"
+
+    }
+
+  );
+
+}
+
+
+/* =========================================================
+   MAIN BUTTON INPUT
+   ========================================================= */
+
+clickButton.addEventListener(
+  "pointerdown",
+  e => {
+
+    e.preventDefault();
+
+    clickGame(
+      e.clientX,
+      e.clientY
+    );
+
+  }
+);
+
+
+/* =========================================================
+   COIN RAIN
+   ========================================================= */
 
 function createCoin() {
 
   const coin =
-    document.createElement("div");
+    document.createElement(
+      "div"
+    );
 
-  coin.className = "coin";
+  coin.className =
+    "coin";
+
+  /*
+     Start above the screen.
+  */
+
+  const startX =
+    25 +
+    Math.random() * 50;
 
   coin.style.left =
-    Math.random() * 100 + "vw";
+    startX + "vw";
 
-  coin.style.top = "-40px";
+  coin.style.top =
+    "-60px";
 
-  document.body.appendChild(coin);
+
+  /*
+     Each coin gets a slightly
+     different speed.
+  */
 
   const speed =
-    120 + Math.random() * 120;
+    100 +
+    Math.random() * 130;
 
-  const start =
+  const drift =
+    (Math.random() - .5) * 50;
+
+  const startTime =
     performance.now();
 
-  function animateCoin(time) {
+
+  let collected =
+    false;
+
+
+  /* =====================================================
+     COLLECT
+     ===================================================== */
+
+  function collectCoin(
+    event
+  ) {
+
+    if (collected)
+      return;
+
+    collected = true;
+
+    if (event)
+      event.preventDefault();
+
+    /*
+       Stop the falling animation
+       immediately.
+    */
+
+    coin.classList.add(
+      "collected"
+    );
+
+    points += 5;
+
+    playPim();
+
+    const rect =
+      coin.getBoundingClientRect();
+
+    createFloatingText(
+      rect.left,
+      rect.top,
+      "+5"
+    );
+
+    showNotification(
+      "+5 kolikkoa saatu Coin Rainista",
+      "coin"
+    );
+
+    /*
+       Remove after collect animation.
+    */
+
+    setTimeout(
+      () => coin.remove(),
+      180
+    );
+  }
+
+
+  /* =====================================================
+     INPUT
+     ===================================================== */
+
+  coin.addEventListener(
+    "pointerdown",
+    collectCoin,
+    {
+      passive: false
+    }
+  );
+
+
+  /*
+     Click fallback.
+     This also makes desktop mouse
+     interaction extremely reliable.
+  */
+
+  coin.addEventListener(
+    "click",
+    collectCoin
+  );
+
+
+  /* =====================================================
+     FALLING ANIMATION
+     ===================================================== */
+
+  function animateCoin(
+    time
+  ) {
+
+    if (collected)
+      return;
 
     const elapsed =
-      (time - start) / 1000;
+      (time - startTime) / 1000;
 
     const y =
+      -60 +
       elapsed * speed;
+
+    const x =
+      drift *
+      Math.sin(
+        elapsed * 2
+      );
+
+    coin.style.transform =
+      `translateX(${x}px)`;
 
     coin.style.top =
       y + "px";
 
-    if (y > window.innerHeight + 40) {
+
+    /*
+       Delete if it reaches the bottom.
+    */
+
+    if (
+      y >
+      window.innerHeight + 60
+    ) {
 
       coin.remove();
+
       return;
     }
 
     requestAnimationFrame(
       animateCoin
     );
+
   }
-
-  coin.addEventListener(
-    "pointerdown",
-    e => {
-
-      e.preventDefault();
-
-      const rect =
-        coin.getBoundingClientRect();
-
-      points += 5;
-
-      createFloatingText(
-        rect.left,
-        rect.top,
-        "+5"
-      );
-
-      coin.remove();
-    }
-  );
 
   requestAnimationFrame(
     animateCoin
   );
 }
+
+
+/* =========================================================
+   EVENT START
+   ========================================================= */
+
+function tryStartEvent() {
+
+  if (
+    activeEvent ||
+    Date.now() <
+    nextEventAllowed
+  )
+    return;
+
+
+  const pool =
+    events.filter(
+      e => e !== lastEvent
+    );
+
+
+  activeEvent =
+    pool[
+      Math.floor(
+        Math.random() *
+        pool.length
+      )
+    ];
+
+
+  eventEnd =
+    Date.now() + 5000;
+
+
+  lastEvent =
+    activeEvent;
+
+
+  nextEventAllowed =
+    Date.now() + 20000;
+
+
+  /*
+     Reset visual state.
+  */
+
+  document.body.classList.remove(
+    "event-coin",
+    "event-golden"
+  );
+
+  clickButton.classList.remove(
+    "coin",
+    "golden"
+  );
+
+
+  /* =====================================================
+     GOLDEN CLICK
+     ===================================================== */
+
+  if (
+    activeEvent ===
+    "Golden Click"
+  ) {
+
+    document.body.classList.add(
+      "event-golden"
+    );
+
+    clickButton.classList.add(
+      "golden"
+    );
+
+    eventText.textContent =
+      "✨ Golden Click aktiivinen";
+
+    showNotification(
+      "Golden click on aktiivisena, klikkaustehot täysille!",
+      "golden"
+    );
+
+  }
+
+
+  /* =====================================================
+     COIN RAIN
+     ===================================================== */
+
+  if (
+    activeEvent ===
+    "Coin Rain"
+  ) {
+
+    document.body.classList.add(
+      "event-coin"
+    );
+
+    clickButton.classList.add(
+      "coin"
+    );
+
+    eventText.textContent =
+      "🪙 Coin Rain aktiivinen";
+
+    showNotification(
+      "Coin rain on aktiivisena, klikkaa palloja",
+      "coin"
+    );
+
+
+    /*
+       Spawn coins.
+    */
+
+    for (
+      let i = 0;
+      i < 25;
+      i++
+    ) {
+
+      /*
+         Stagger the spawn slightly
+         instead of putting everything
+         on screen at exactly once.
+      */
+
+      setTimeout(
+        createCoin,
+        i * 80
+      );
+
+    }
+
+  }
+
+
+  eventPanel.classList.add(
+    "active"
+  );
+
+}
+
 
 /* =========================================================
    UPDATE
@@ -956,46 +2074,87 @@ function createCoin() {
 
 function update(dt) {
 
-  points += autoPerSec * dt;
+  /*
+     Passive income.
+  */
 
-  achievements.forEach(a => {
+  points +=
+    autoPerSec * dt;
 
-    if (
-      totalClicks >= a.clicks &&
-      !unlockedAchievements.includes(
-        a.name
-      )
-    ) {
 
-      unlockedAchievements.push(
-        a.name
-      );
+  /*
+     Achievements.
+  */
+
+  achievements.forEach(
+    a => {
+
+      if (
+        totalClicks >=
+        a.clicks &&
+
+        !unlockedAchievements
+          .includes(a.name)
+      ) {
+
+        unlockedAchievements.push(
+          a.name
+        );
+
+      }
+
     }
-  });
+  );
+
+
+  /*
+     Event end.
+  */
 
   if (
     activeEvent &&
-    Date.now() > eventEnd
+    Date.now() >
+    eventEnd
   ) {
 
     activeEvent = null;
+
 
     eventPanel.classList.remove(
       "active"
     );
 
+
+    document.body.classList.remove(
+      "event-coin",
+      "event-golden"
+    );
+
+
     clickButton.classList.remove(
+      "coin",
       "golden"
     );
+
   }
+
 
   tryStartEvent();
 
+
+  /*
+     Score.
+  */
+
   scoreElement.textContent =
-    Math.floor(points).toLocaleString(
+    Math.floor(
+      points
+    ).toLocaleString(
       "fi-FI"
     );
+
 }
+
 
 /* =========================================================
    CANVAS
@@ -1010,12 +2169,8 @@ function draw() {
     canvas.height
   );
 
-  /*
-    Canvas is intentionally mostly transparent.
-    The CSS background + glass UI creates the
-    Liquid Glass appearance.
-  */
 }
+
 
 /* =========================================================
    GAME LOOP
@@ -1032,16 +2187,22 @@ function loop(t) {
   last = t;
 
   update(dt);
+
   draw();
 
-  requestAnimationFrame(loop);
+  requestAnimationFrame(
+    loop
+  );
+
 }
+
 
 /* =========================================================
    START
    ========================================================= */
 
 loadGame();
+
 updateUpgradeUI();
 
 setInterval(
@@ -1049,13 +2210,12 @@ setInterval(
   2000
 );
 
-loop(last);
-
-/* Save when leaving */
 window.addEventListener(
   "beforeunload",
   saveGame
 );
+
+loop(last);
 
 </script>
 
